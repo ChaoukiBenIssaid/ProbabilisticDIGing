@@ -137,7 +137,8 @@ In this task, we will consider the following datasets:
 \item Start simple: implement DGD and DIGing for the linear regression + logistic regression cases.
 \item Implement the probabilistic DIGing and experiment with different choice of the probability $p$.
 \begin{itemize}
-\item[(i)] $p^k = \exp\left(-\frac{k}{T}\right), ~~ T > 0$.
+\item[(i)] $p^k = \frac{a}{a + k}, ~~ a > 0$.
+\item[(ii)] $p^k = \exp\left(-\frac{k}{T}\right), ~~ T > 0$.
 \end{itemize}
 \item Plots (need to think more about it): 
 \begin{itemize}
