@@ -1,0 +1,169 @@
+\documentclass[12pt,draftclsnofoot,onecolumn]{IEEEtran}
+%\documentclass[journal,10pt]{IEEEtran}
+
+\IEEEoverridecommandlockouts
+\usepackage{algorithm,algorithmic,multirow,hhline}
+\usepackage{hyperref}
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{proof}{Proof}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[noadjust]{cite}
+
+\def\ie{\emph{i.e.\  }}
+\def\eg{\emph{e.g.\  }}
+\providecommand{\Ex}[1]{\mathbb{E}\left[#1\right]}
+\providecommand{\abs}[1]{\left|#1\right|}
+\providecommand{\norm}[1]{\left\|#1\right\|}
+\providecommand{\ip}[1]{\boldsymbol{\langle}#1\boldsymbol{\rangle}}
+\newcommand{\tred}[1]{{\textcolor{red}{#1}}}
+\newcommand{\tblue}[1]{{\textcolor{blue}{#1}}}
+\def\sm{\small}
+\def\nm{\normalsize}
+\usepackage{bm}
+
+\usepackage{amsmath,graphicx}
+\usepackage{placeins}
+\usepackage{amsmath,epsfig}
+\usepackage{epstopdf}
+\usepackage{amssymb}
+\providecommand{\tabularnewline}{\\}
+
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{caption}
+\usepackage{comment}
+%\usepackage{subfigure}
+\usepackage{subcaption}
+\usepackage{pstricks}
+\usepackage{subfloat}
+\usepackage{setspace}
+\usepackage[left=0.58in, right=0.58in, top=0.71in]{geometry}
+\newenvironment{thisnote}{\par\color{blue}}{\par}
+\usepackage{xpatch}
+\xpatchcmd\algorithmic
+  {\newcommand{\IF}}
+  {%
+    \newcommand\SCOPE{\begin{ALC@g}}%
+    \newcommand\ENDSCOPE{\end{ALC@g}}%
+    \newcommand{\IF}%
+  }
+  {}{\fail}
+
+
+	% \usepackage{stfloats} % bottom floating equations
+\usepackage{dblfloatfix}
+
+
+
+\begin{document}
+
+\title{Probabilistic DIGing}
+
+%\author{Author 1, Author 2, Author 3}
+%\author{Chaouki Ben Issaid, Anis Elgabli, Mehdi Bennis} %\thanks{C. Ben Issaid, A. Elgabli and M. Bennis are with the Centre of Wireless Communications, University of Oulu, 90014 Oulu, Finland (email: \{chaouki.benissaid, anis.elgabli, mehdi.bennis\}@oulu.fi).}} 
+
+
+\maketitle
+
+\section{Brief Description}
+The optimization problem is given by
+\begin{align}
+\textbf{(P1)} ~~ &\bm{\Theta}^* := \arg\min_{\bm{\Theta}} \sum_{n=1}^N f_n(\bm{\Theta}),
+\end{align}
+where $\bm{\Theta} \in  \mathbb{R}^{d \times 1}$ is the model parameter and $f_n: \mathbb{R}^d \rightarrow \mathbb{R}$ is a local function composed of data stored at worker $n$.
+
+\subsection{Linear Regression}
+\subsubsection{Loss Function}
+In this case, the local cost function at worker $n$ is explicitly given by
+\begin{align}
+f_n(\bm{\theta}) = \frac{1}{2} \| \bm{X}_n \bm{\theta} - \bm{y}_n\|^2,
+\end{align}
+where $\bm{X}_n \in \mathbb{R}^{s \times d}$ and $\bm{y}_n \in \mathbb{R}^{s \times 1}$ are private for each worker $n \in \mathcal{V}$ where $s$ represents the size of the data at each worker.
+\subsubsection{Datasets}
+In this task, we will consider the following datasets (see Table 2 of \url{http://cacr.uwaterloo.ca/techreports/2019/cacr2019-05.pdf}):
+\begin{itemize}
+\item Boston: \url{https://github.com/benchopt/benchmark_ols/tree/master/datasets}
+\item Wine Quality: \url{https://archive.ics.uci.edu/ml/datasets/wine+quality}
+\end{itemize}
+\subsection{Logistic Regression}
+\subsubsection{Loss Function}
+In this subsection, we consider the $L_2$-regularized binary logistic regression task. We assume that each worker $n$ owns a data matrix $\bm{X}_n = (\bm{x}_{n,1}, \dots, \bm{x}_{n,s})^T \in \mathbb{R}^{s \times d}$ along with the corresponding labels vector $\bm{y}_n = (y_{n,1}, \dots, y_{n,s}) \in \{-1, 1\}^{s}$. The local cost function for worker $n$ is then given by 
+\begin{align}
+f_n(\bm{\theta}) = \frac{1}{s} \sum_{j=1}^s \log\left( 1 + \exp\left(- y_{n,j} \bm{x}_{n,j}^T \bm{\theta} \right)\right) + \frac{\lambda}{2} \|\bm{\theta}\|_2^2,
+\end{align}
+where $\lambda$ is the regularization parameter.
+\subsubsection{Datasets}
+In this task, we will consider the following datasets:
+\begin{itemize}
+\item a1a:  \url{https://github.com/konstmish/opt_methods/tree/master/datasets}
+\item mushrooms: \url{https://github.com/konstmish/opt_methods/tree/master/datasets}
+\item w8a: \url{https://github.com/konstmish/opt_methods/tree/master/datasets}
+\item madelon: \url{https://github.com/benchopt/benchmark_logreg_l2/tree/master/datasets}
+\item covtype: \url{https://github.com/benchopt/benchmark_logreg_l2/tree/master/datasets}
+\end{itemize}
+
+\begin{table*}[h]
+\centering
+\begin{tabular}{|l|l|c|c|c|}
+\hline
+\textbf{Dataset} & \textbf{Task} & \textbf{Model Size ($d$)} & \textbf{Number of Instances} & \textbf{Number of Workers ($N$)} \\ \hline \hline
+  & linear regression      & $50$  & $1200$ & $ $ \\ \hline
+ & linear regression           &  &  & \\ \hline
+ & logistic regression  &  & & \\ \hline
+ & logistic regression       &  & & \\ \hline
+\end{tabular}
+\caption{List of datasets used in the numerical experiments.}
+\label{table} 
+\end{table*}
+
+\subsection{Websites for datasets}
+\begin{itemize}
+\item \url{https://www.openml.org/}
+\item \url{https://archive.ics.uci.edu/ml/datasets.php}
+\end{itemize}
+
+\subsection{Tasks}
+\begin{itemize}
+\item Dataset preparation: download at least 4 datasets for each task (regression/classification) in the format $X$ and $y$ (as .npy files if possible, otherwise any format you are comfortable with).
+\item Strongly convex case
+\begin{itemize}
+\item Start simple: implement DGD and DIGing for the linear regression + logistic regression cases.
+\item Implement the probabilistic DIGing and experiment with different choice of the probability $p$.
+\begin{itemize}
+\item[(i)] $p^k = \exp\left(-\frac{k}{T}\right), ~~ T > 0$.
+\end{itemize}
+\item Plots (need to think more about it): 
+\begin{itemize}
+\item[(i)] train/test loss (accuracy) or residuals vs. number of iterations.
+\item[(ii)] train/test loss (accuracy) or residuals vs. cumulative communication cost. How to define the cumulative communication cost in our context?
+\begin{align}
+C_T^k = \sum_{n=1}^N d_n c^k
+\end{align}
+where $c^k$ is the size of the variables exchanged at iteration $k$.
+\end{itemize}
+\item Proof attempt.
+\end{itemize}
+\item Stochastic version of above (double-check the literature).
+\item Non-convex case.
+\end{itemize}
+
+%\input{Introduction}
+%\input{Notations}
+%\input{formulation}
+%\input{algorithm}
+%\input{analysis}
+%\input{evaluation}
+%\section{Conclusions}\label{SecConc}
+
+%\vspace{-5.5cm}
+%\bibliographystyle{IEEEtran}
+%\bibliography{references}
+
+\end{document}
