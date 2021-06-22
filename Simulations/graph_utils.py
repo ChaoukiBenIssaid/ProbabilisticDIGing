@@ -1,5 +1,5 @@
 import numpy as np
-
+import networkx as nx
 
 def generate_random_adjacency_matrix(n):
     """Generate the adjacency matrix of a random connected graph"""

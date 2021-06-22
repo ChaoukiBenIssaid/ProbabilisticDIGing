@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 from graph_utils import *
 from tqdm import tqdm
+from sklearn.preprocessing import StandardScaler
 
 
 def MSE(X, y, theta):
@@ -16,7 +17,7 @@ def grad_MSE(X, y, theta):
     step2 = np.einsum("ij,ijk->jk", step1, X)
     return 1 / X.shape[0] * step2
 
-def sim_linear_regression(X, y, n, iter_max, learning_rate, seed=None):
+def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize=False, seed=None):
     """Simulate a linear regression between n agents"""
     A = generate_random_adjacency_matrix(n)
     W = metropolis_weights(A)
@@ -24,7 +25,11 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, seed=None):
     nb_features = X.shape[-1]
     theta = rng.standard_normal(nb_features * n).reshape(n, nb_features)
     X_split, y_split = random_split(X, y, n, seed)
-
+    
+    if standardize:
+        scalers = [StandardScaler() for _ in range(n)]
+        for agent in range(n) : #for loop at the moment because it's easier
+            X_split[:,agent,:] = scalers[agent].fit_transform(X_split[:,agent,:])
     gradients_list = list()
 
     for _ in range(iter_max):
@@ -33,3 +38,4 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, seed=None):
 
         gradients_list.append(grad)
     return gradients_list
+
