@@ -22,7 +22,7 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize=False, s
     A = generate_random_adjacency_matrix(n)
     W = metropolis_weights(A)
     rng = np.random.default_rng(seed)
-    nb_features = X.shape[-1]
+    nb_features = X.shape[-1] + 1 #+1 for bias
     theta = rng.standard_normal(nb_features * n).reshape(n, nb_features)
     X_split, y_split = random_split(X, y, n, seed)
     
@@ -30,12 +30,14 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize=False, s
         scalers = [StandardScaler() for _ in range(n)]
         for agent in range(n) : #for loop at the moment because it's easier
             X_split[:,agent,:] = scalers[agent].fit_transform(X_split[:,agent,:])
-    gradients_list = list()
+    
+    X_split = np.append(X_split, np.ones(X_split.shape[:2] + (1,)), axis = 2) #add the bias
+    thetas = list()
 
     for _ in range(iter_max):
         grad = grad_MSE(X_split, y_split, theta)
         theta = W @ theta - learning_rate * grad
 
-        gradients_list.append(grad)
-    return gradients_list
+        thetas.append(theta)
+    return thetas
 
