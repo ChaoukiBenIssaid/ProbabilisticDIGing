@@ -56,7 +56,7 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
 
     thetas = [rng.standard_normal(nb_features) for _ in range(n)] 
     X_split, y_split = random_split(X, y, n, seed = seed)
-    train_test_datasets = [train_test_split(X_split[i], y_split[i]) for i in range(n)]
+    train_test_datasets = [train_test_split(X_split[i], y_split[i], random_state = seed) for i in range(n)]
     X_train, X_test, y_train, y_test = [[tts_agent[i] for tts_agent in train_test_datasets] for i in range(4)]
 
 
@@ -73,7 +73,7 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
 
 
 
-    thetas_tracker = [thetas]
+    losses = list() 
     for _ in range(iter_max):
         new_thetas = thetas.copy()
         for i in range(n):
@@ -82,5 +82,6 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
             sum_Wtheta = np.sum(Wtheta, axis = 0)
             new_thetas[i] = sum_Wtheta - learning_rate * grad
         thetas = new_thetas
-        thetas_tracker.append(thetas)
-    return thetas_tracker
+        loss = np.mean([lr_loss(thetas[i], X_test[i], y_test[i]) for i in range(n)])
+        losses.append(loss)
+    return losses
