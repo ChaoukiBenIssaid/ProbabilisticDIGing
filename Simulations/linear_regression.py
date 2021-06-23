@@ -3,6 +3,7 @@ import networkx as nx
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from utils import *
 #from sklearn.datasets import load_boston
 
 def generate_random_adjacency_matrix(n):
@@ -44,8 +45,6 @@ def metropolis_weights(Adj):
         W[i, i] = 1 - np.sum(W[i, :])
     return W
 
-def lr_grad(W, X, y):
-    return X.T.dot(X.dot(W) - y)
 
 def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False, seed=None):
     """Simulate a linear regression between n agents"""
