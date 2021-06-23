@@ -57,11 +57,11 @@ def logistic_grad(W, X, y, lmbd):
 # linear regression loss function
 def lr_loss(W, X, y):
     diff = y - X.dot(W)
-    return 0.5 * diff.dot(diff)
+    return 0.5/X.shape[0] * diff.dot(diff)
 
 # linear regression gradient function
 def lr_grad(W, X, y):
-    return X.T.dot(X.dot(W) - y)
+    return 1/X.shape[0] * X.T.dot(X.dot(W) - y)
 
 
 # more functions if needed

@@ -78,7 +78,7 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
     for _ in range(iter_max):
         new_thetas = thetas.copy()
         for i in range(n):
-            grad = 1/X_train[i].shape[0] * lr_grad(thetas[i], X_train[i], y_train[i])
+            grad = lr_grad(thetas[i], X_train[i], y_train[i])
             Wtheta = [W[i,j]*thetas[j] for j in range(n)]
             sum_Wtheta = np.sum(Wtheta, axis = 0)
             new_thetas[i] = sum_Wtheta - learning_rate * grad
