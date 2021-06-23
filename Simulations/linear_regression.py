@@ -85,3 +85,43 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
         loss = np.mean([lr_loss(thetas[i], X_test[i], y_test[i]) for i in range(n)])
         losses.append(loss)
     return losses
+
+def sim_logistic_regression(X, y, n, iter_max, learning_rate, lmbd = 0, standardize = False, seed=None):
+    """Simulate a linear regression between n agents"""
+    A = generate_random_adjacency_matrix(n)
+    W = metropolis_weights(A)
+    rng = np.random.default_rng(seed)
+    nb_features = X.shape[-1] +1  #+1 for bias
+
+
+    thetas = [rng.standard_normal(nb_features) for _ in range(n)] 
+    X_split, y_split = random_split(X, y, n, seed = seed)
+    train_test_datasets = [train_test_split(X_split[i], y_split[i], random_state = seed) for i in range(n)]
+    X_train, X_test, y_train, y_test = [[tts_agent[i] for tts_agent in train_test_datasets] for i in range(4)]
+
+
+
+
+    if standardize:
+        scalers = [StandardScaler() for _ in range(n)]
+        for i in range(n) : 
+            X_train[i] = scalers[i].fit_transform(X_train[i]) #scale each agent's dataset independently
+            X_test[i] = scalers[i].transform(X_test[i]) 
+
+    X_train = [np.append(X_train[i], np.ones((X_train[i].shape[0],1)), axis = 1) for i in range(n)] #add a column of ones
+    X_test = [np.append(X_test[i], np.ones((X_test[i].shape[0],1)), axis = 1) for i in range(n)] #add a column of ones
+
+
+
+    losses = list() 
+    for _ in range(iter_max):
+        new_thetas = thetas.copy()
+        for i in range(n):
+            grad = logistic_grad(thetas[i], X_train[i], y_train[i], lmbd)
+            Wtheta = [W[i,j]*thetas[j] for j in range(n)]
+            sum_Wtheta = np.sum(Wtheta, axis = 0)
+            new_thetas[i] = sum_Wtheta - learning_rate * grad
+        thetas = new_thetas
+        loss = np.mean([logistic_loss(thetas[i], X_test[i], y_test[i], lmbd) for i in range(n)])
+        losses.append(loss)
+    return losses
