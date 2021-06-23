@@ -36,7 +36,7 @@ def mixing_matrix(Adj):
     degree = np.sum(Adj, axis=0)
     W = np.zeros([N, N])
     for i in range(N):
-        N_i = np.nonzero(Adj[i, :])[0]  # Fixed Neighbors
+        N_i = np.nonzero(Adj[i, :])[1]  # Fixed Neighbors
         for j in N_i:
             W[i, j] = 1/(1+np.max([degree[i], degree[j]]))
         W[i, i] = 1 - np.sum(W[i, :])
