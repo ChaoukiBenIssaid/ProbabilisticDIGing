@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 #from sklearn.datasets import load_boston
 
 def generate_random_adjacency_matrix(n):
@@ -54,21 +55,30 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
     nb_features = X.shape[-1] +1  #+1 for bias
 
 
-    X_split, y_split = random_split(X, y, n, seed = seed)
     thetas = [rng.standard_normal(nb_features) for _ in range(n)] 
+    X_split, y_split = random_split(X, y, n, seed = seed)
+    train_test_datasets = [train_test_split(X_split[i], y_split[i]) for i in range(n)]
+    X_train, X_test, y_train, y_test = [[tts_agent[i] for tts_agent in train_test_datasets] for i in range(4)]
+
+
+
 
     if standardize:
         scalers = [StandardScaler() for _ in range(n)]
         for i in range(n) : 
-            X_split[i] = scalers[i].fit_transform(X_split[i]) #scale each agent's dataset independently
+            X_train[i] = scalers[i].fit_transform(X_train[i]) #scale each agent's dataset independently
+            X_test[i] = scalers[i].transform(X_test[i]) 
 
-    X_split = [np.append(X_split[i], np.ones((X_split[i].shape[0],1)), axis = 1) for i in range(n)] #add a column of ones
+    X_train = [np.append(X_train[i], np.ones((X_train[i].shape[0],1)), axis = 1) for i in range(n)] #add a column of ones
+    X_test = [np.append(X_test[i], np.ones((X_test[i].shape[0],1)), axis = 1) for i in range(n)] #add a column of ones
+
+
 
     thetas_tracker = [thetas]
     for _ in range(iter_max):
         new_thetas = thetas.copy()
         for i in range(n):
-            grad = 1/X_split[i].shape[0] * lr_grad(thetas[i], X_split[i], y_split[i])
+            grad = 1/X_train[i].shape[0] * lr_grad(thetas[i], X_train[i], y_train[i])
             Wtheta = [W[i,j]*thetas[j] for j in range(n)]
             sum_Wtheta = np.sum(Wtheta, axis = 0)
             new_thetas[i] = sum_Wtheta - learning_rate * grad
