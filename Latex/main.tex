@@ -114,7 +114,7 @@ In this task, we will consider the following datasets:
 \begin{tabular}{|l|l|c|c|c|}
 \hline
 \textbf{Dataset} & \textbf{Task} & \textbf{Model Size ($d$)} & \textbf{Number of Instances} & \textbf{Number of Workers ($N$)} \\ \hline \hline
-  & linear regression      & $50$  & $1200$ & $ $ \\ \hline
+  & linear regression      & $$  & $$ & $ $ \\ \hline
  & linear regression           &  &  & \\ \hline
  & logistic regression  &  & & \\ \hline
  & logistic regression       &  & & \\ \hline
@@ -145,14 +145,16 @@ In this task, we will consider the following datasets:
 \item[(i)] train/test loss (accuracy) or residuals vs. number of iterations.
 \item[(ii)] train/test loss (accuracy) or residuals vs. cumulative communication cost. How to define the cumulative communication cost in our context?
 \begin{align}
-C_T^k = \sum_{n=1}^N d_n c^k
+C_T^k = C_T^{k-1} + \sum_{n=1}^N d_n c^k
 \end{align}
-where $c^k$ is the size of the variables exchanged at iteration $k$.
+where $c^k$ is the size of the variables exchanged at iteration $k$ and the residuals ($R$) are defined as
+\begin{align}
+R^k = \frac{\|\bm{\theta}^k - \bm{\theta}^{\star}\|_F}{\|\bm{\theta}^0 - \bm{\theta}^{\star}\|_F}
+\end{align}
 \end{itemize}
-\item Proof attempt.
 \end{itemize}
-\item Stochastic version of above (double-check the literature).
-\item Non-convex case.
+\item Stochastic version of the algorithms.
+\item Proof attempt (strongly convex/dynamic, non-convex static/ non-convex dynamic).
 \end{itemize}
 
 %\input{Introduction}
