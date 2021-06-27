@@ -213,8 +213,6 @@ def prob_DIGing_linear_reg(X, y, n, iter_max, learning_rate, proba = prob_gatien
 
 def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_function, lmbd = 0, standardize = False, seed=None):
     """Simulate a linear regression between n agents"""
-    A = generate_random_adjacency_matrix(n, seed)
-    W = metropolis_weights(A)
     rng = np.random.default_rng(seed)
     nb_features = X.shape[-1] +1  #+1 for bias
 
@@ -234,6 +232,8 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_functio
     losses = list() 
     accuracies = list() 
     for _ in range(iter_max):
+        A = generate_random_adjacency_matrix(n, seed)
+        W = metropolis_weights(A)
         new_thetas = thetas.copy()
         for i in range(n):
             grad = logistic_grad(thetas[i], X_train[i], y_train[i], lmbd)
@@ -250,3 +250,4 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_functio
     results["losses"] = losses
     results["accuracies"] = accuracies
     return results
+
