@@ -6,10 +6,10 @@ from sklearn.model_selection import train_test_split
 from utils import *
 #from sklearn.datasets import load_boston
 
-def generate_random_adjacency_matrix(n):
+def generate_random_adjacency_matrix(n, seed):
     """Generate the adjacency matrix of a random connected graph"""
     while True:
-        g = nx.generators.random_graphs.binomial_graph(n, 0.4)
+        g = nx.generators.random_graphs.binomial_graph(n, 0.4, seed = seed)
         if nx.algorithms.components.is_connected(g):
             return nx.linalg.graphmatrix.adjacency_matrix(g)
         
@@ -48,8 +48,6 @@ def metropolis_weights(Adj):
 
 def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False, seed=None):
     """Simulate a linear regression between n agents"""
-    A = generate_random_adjacency_matrix(n)
-    W = metropolis_weights(A)
     rng = np.random.default_rng(seed)
     nb_features = X.shape[-1] +1  #+1 for bias
 
@@ -74,7 +72,12 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
 
 
     losses = list() 
+    communication_costs = [0]
     for _ in range(iter_max):
+        #Dynamic graph
+        A = generate_random_adjacency_matrix(n, seed)
+        W = metropolis_weights(A)
+        #
         new_thetas = thetas.copy()
         for i in range(n):
             grad = lr_grad(thetas[i], X_train[i], y_train[i])
@@ -84,7 +87,16 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, standardize = False,
         thetas = new_thetas
         loss = np.mean([lr_loss(thetas[i], X_test[i], y_test[i]) for i in range(n)])
         losses.append(loss)
-    return losses
+    
+        #communication costs part 
+        nb_comms = np.sum(degrees(A))
+        communication_costs.append(nb_features * nb_comms + communication_costs[-1])
+
+
+    results = dict()
+    results["losses"] = losses
+    results["comm_costs"] = communication_costs[1:]
+    return results 
 
 def sim_logistic_regression(X, y, n, iter_max, learning_rate, lmbd = 0, standardize = False, seed=None):
     """Simulate a linear regression between n agents"""
