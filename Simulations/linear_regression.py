@@ -211,7 +211,7 @@ def prob_DIGing_linear_reg(X, y, n, iter_max, learning_rate, proba = prob_gatien
     return results
 
 
-def sim_logistic_regression(X, y, n, iter_max, learning_rate, lmbd = 0, standardize = False, seed=None):
+def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_function, lmbd = 0, standardize = False, seed=None):
     """Simulate a linear regression between n agents"""
     A = generate_random_adjacency_matrix(n, seed)
     W = metropolis_weights(A)
@@ -232,6 +232,7 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, lmbd = 0, standard
     X_test = [np.append(X_test[i], np.ones((X_test[i].shape[0],1)), axis = 1) for i in range(n)] #add a column of ones
 
     losses = list() 
+    accuracies = list() 
     for _ in range(iter_max):
         new_thetas = thetas.copy()
         for i in range(n):
@@ -241,5 +242,11 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, lmbd = 0, standard
             new_thetas[i] = sum_Wtheta - learning_rate * grad
         thetas = new_thetas
         loss = np.mean([logistic_loss(thetas[i], X_test[i], y_test[i], lmbd) for i in range(n)])
+        acc = np.mean([accuracy(thetas[i], X_test[i], y_test[i], activation_function) for i in range(n)])
         losses.append(loss)
-    return losses
+        accuracies.append(acc)
+
+    results = dict()
+    results["losses"] = losses
+    results["accuracies"] = accuracies
+    return results

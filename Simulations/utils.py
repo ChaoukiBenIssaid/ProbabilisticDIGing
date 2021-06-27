@@ -49,9 +49,9 @@ def logistic_loss(W, X, y, lmbd):
 
 # gradient function for logistic regression case
 def logistic_grad(W, X, y, lmbd):
-    ywTx = y * (X @ w)
+    ywTx = y * (X @ W)
     temp = 1. / (1. + np.exp(ywTx))
-    grad = -(X.T @ (y * temp)) + lmbd * w
+    grad = -(X.T @ (y * temp)) + lmbd * W
     return grad
 
 # linear regression loss function
@@ -63,11 +63,16 @@ def lr_loss(W, X, y):
 def lr_grad(W, X, y):
     return 1/X.shape[0] * X.T.dot(X.dot(W) - y)
 
+def accuracy(W, X, y, activation_function):
+    pred = activation_function(X@W)
+    return np.sum(pred == y)/len(y) 
+    
 def prob_gatien(k, a) : 
     return a / (a + k) 
 
 def prob_chaouki(k, T) : 
     return np.exp(-k/T)
+
 # more functions if needed
 
 # Draw the graph
