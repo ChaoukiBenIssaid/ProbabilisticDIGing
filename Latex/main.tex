@@ -128,6 +128,41 @@ In this task, we will consider the following datasets:
 \item \url{https://www.openml.org/}
 \item \url{https://archive.ics.uci.edu/ml/datasets.php}
 \end{itemize}
+\subsection{Algorithms}
+\subsubsection{Decentralized SGD}
+\begin{itemize}
+    \item Initialization: $\bm{\theta}^0 \in \mathbb{R}^d$.
+    \item Model Update
+    \begin{align}
+    \bm{\theta}^{k+1} = \bm{W}^{k} \bm{\theta}^k - \alpha \nabla \bm{f}(\bm{\theta}^k)
+    \end{align}
+\end{itemize}
+
+\subsubsection{DIGing}
+\begin{itemize}
+    \item Initialization: $\bm{\theta}^0 \in \mathbb{R}^d$, $\bm{\delta}_n^0 = \nabla f_n(\bm{\theta}^0)$.
+    \item Model Update
+    \begin{align}
+    \bm{\theta}^{k+1} &= \bm{W}^{k} \bm{\theta}^k - \alpha \bm{\delta}^k \\
+    \bm{\delta}^{k+1} &= \bm{W}^{k} \bm{\delta}^{k} +  \nabla \bm{f}(\bm{\theta}^{k+1}) - \nabla \bm{f}(\bm{\theta}^{k})
+    \end{align}
+\end{itemize}
+
+\subsubsection{Proposed: Probabilistic DIGing}
+\begin{itemize}
+    \item Initialization: $\bm{\theta}^0 \in \mathbb{R}^d$, $\bm{\delta}_n^0 = \nabla f_n(\bm{\theta}^0)$.
+    \item Model Update
+    \begin{align}
+    \bm{\theta}^{k+1} = \bm{W}^{k} \bm{\theta}^k - \alpha \bm{\delta}^k
+    \end{align}
+    \item Gradient Tracking
+    \begin{align}
+        \bm{\delta}^{k+1} =  \left\{\begin{array}{lr}
+        \nabla \bm{f}(\bm{\theta}^{k+1}), &\text{with probability } p^k\\
+         \bm{W}^{k} \bm{\delta}^{k} +  \nabla \bm{f}(\bm{\theta}^{k+1}) - \nabla \bm{f}(\bm{\theta}^{k}), &\text{with probability } 1-p^k
+        \end{array}\right. 
+    \end{align}
+\end{itemize}
 
 \subsection{Tasks}
 \begin{itemize}
