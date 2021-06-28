@@ -1,10 +1,10 @@
 import numpy as np
 import networkx as nx
 
-def generate_random_adjacency_matrix(n):
+def generate_random_adjacency_matrix(n, seed):
     """Generate the adjacency matrix of a random connected graph"""
     while True:
-        g = nx.generators.random_graphs.binomial_graph(n, 0.4)
+        g = nx.generators.random_graphs.binomial_graph(n, 0.4, seed = seed)
         if nx.algorithms.components.is_connected(g):
             return nx.linalg.graphmatrix.adjacency_matrix(g)
 
@@ -21,18 +21,14 @@ def neighbors(W, i):
     adj = adjacency_matrix(W)
     return np.where(adj[i] == 1)
 
-def random_split(X, y, n, seed=None):
-    """Equally split data between n agents"""
-    rng = np.random.default_rng(seed)
-    perm = rng.permutation(y.size)[y.size % n:]
-    X_split = np.stack(np.array_split(X[perm], n), axis=1)  #np.stack to keep as a np array
-    y_split = np.stack(np.array_split(y[perm], n), axis=1)
-    return X_split, y_split
-
-def metropolis_weights(A):
-    """Apply the Metropolis weights algorithm to an adjacency matrix"""
-    deg = degrees(A)
-    W_without_diag = A / (1 + np.maximum(deg, deg.T)) #generate the weights for i != j
-    diag = np.diag(np.ones(deg.size) - np.sum(W_without_diag, axis=1)) #generate the weights for i=j
-    return W_without_diag + diag 
+def metropolis_weights(Adj):
+    N = np.shape(Adj)[0]
+    degree = degrees(Adj)
+    W = np.zeros([N, N])
+    for i in range(N):
+        N_i = np.nonzero(Adj[i, :])[1]  # Fixed Neighbors
+        for j in N_i:
+            W[i, j] = 1/(1+np.max([degree[i], degree[j]]))
+        W[i, i] = 1 - np.sum(W[i, :])
+    return W
 

@@ -73,6 +73,14 @@ def prob_gatien(k, a) :
 def prob_chaouki(k, T) : 
     return np.exp(-k/T)
 
+def random_split(X, y, n, seed=None):
+    """Equally split data between n agents"""
+    rng = np.random.default_rng(seed)
+    perm = rng.permutation(y.size)
+    X_split = np.array_split(X[perm], n)  #np.stack to keep as a np array
+    y_split = np.array_split(y[perm], n)
+    return X_split, y_split
+
 # more functions if needed
 
 # Draw the graph
