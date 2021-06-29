@@ -3,6 +3,8 @@ import networkx as nx
 from itertools import combinations
 import numpy as np
 from random import random
+from sklearn.model_selection import train_test_split 
+
 
 #number of workers
 n = 10
@@ -81,6 +83,10 @@ def random_split(X, y, n, seed=None):
     y_split = np.array_split(y[perm], n)
     return X_split, y_split
 
+def split_to_train_test(X, y, n, seed = None):
+    X_split, y_split = random_split(X, y, n, seed = seed)
+    train_test_datasets = [train_test_split(X_split[i], y_split[i], random_state = seed) for i in range(n)]
+    return train_test_datasets
 # more functions if needed
 
 # Draw the graph

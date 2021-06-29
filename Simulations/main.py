@@ -2,23 +2,21 @@ import numpy as np
 import networkx as nx
 from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split 
 from graph_utils import *
 from utils import * 
 
-def sim_linear_regression(X, y, n, iter_max, learning_rate, algo = "dgd", proba = prob_gatien, proba_param = 1, standardize = False, seed=None):
+def sim_linear_regression(train_test_datasets, n, iter_max, learning_rate, algo = "dgd", proba = prob_gatien, proba_param = 1, standardize = False, seed=None):
     """Simulate a linear regression between n agents
     
     need to do the docstring 
     
+    train_test_datasets : return from split_to_train_test
     algo : "dgd", "dig" or "prob-dig"
     """
     rng = np.random.default_rng(seed)
     ##### DATASET PROCESSING
-    nb_features = X.shape[-1] +1  #+1 for bias
+    nb_features = train_test_datasets[0][0].shape[-1] +1  #0 for first split, 0 for x_train, +1 for bias
 
-    X_split, y_split = random_split(X, y, n, seed = seed)
-    train_test_datasets = [train_test_split(X_split[i], y_split[i], random_state = seed) for i in range(n)]
     X_train, X_test, y_train, y_test = [[tts_agent[i] for tts_agent in train_test_datasets] for i in range(4)]
     if standardize:
         scalers = [StandardScaler() for _ in range(n)]
@@ -86,19 +84,19 @@ def sim_linear_regression(X, y, n, iter_max, learning_rate, algo = "dgd", proba 
     return results
 
 
-def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_function, lmbd=  0, algo = "dgd", proba = prob_gatien, proba_param = 1, standardize = False, seed=None):
+def sim_logistic_regression(train_test_datasets, n, iter_max, learning_rate, activation_function, lmbd=  0, algo = "dgd", proba = prob_gatien, proba_param = 1, standardize = False, seed=None):
     """Simulate a linear regression between n agents
     
     need to do the docstring 
     
+    train_test_datasets : return from split_to_train_test
     algo : "dgd", "dig" or "prob-dig"
     """
     rng = np.random.default_rng(seed)
     ##### DATASET PROCESSING
-    nb_features = X.shape[-1] +1  #+1 for bias
+    nb_features = train_test_datasets[0][0].shape[-1] +1  #0 for first split, 0 for x_train, +1 for bias
 
-    X_split, y_split = random_split(X, y, n, seed = seed)
-    train_test_datasets = [train_test_split(X_split[i], y_split[i], random_state = seed) for i in range(n)]
+
     X_train, X_test, y_train, y_test = [[tts_agent[i] for tts_agent in train_test_datasets] for i in range(4)]
     if standardize:
         scalers = [StandardScaler() for _ in range(n)]
@@ -124,7 +122,7 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_functio
         degs = degrees(A)
         
         ### Linear regression initialization
-        new_thetas = thetas.copy() # to change all the thetas/delta at once
+        new_thetas = thetas.copy() # to chang"e all the thetas/delta at once
         new_deltas = deltas.copy()
         c_k = 0 # communication costs at iteration k 
         ### Linear regression
