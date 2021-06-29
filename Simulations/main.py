@@ -110,7 +110,7 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_functio
     ######
     ###### ALGORITHM INITIALIZATION
     thetas = [rng.standard_normal(nb_features) for _ in range(n)] 
-    deltas = [lr_grad(thetas[i], X_train[i], y_train[i]) for i in range(n)]
+    deltas = [logistic_grad(thetas[i], X_train[i], y_train[i], lmbd) for i in range(n)]
 
     losses = list() 
     accuracies = list() 
@@ -155,7 +155,7 @@ def sim_logistic_regression(X, y, n, iter_max, learning_rate, activation_functio
         ### thetas and deltas update
         thetas = new_thetas
         deltas = new_deltas
-        loss = np.mean([lr_loss(thetas[i], X_test[i], y_test[i]) for i in range(n)])
+        loss = np.mean([logistic_loss(thetas[i], X_test[i], y_test[i], lmbd) for i in range(n)])
         losses.append(loss)
         acc = np.mean([accuracy(thetas[i], X_test[i], y_test[i], activation_function) for i in range(n)])
         accuracies.append(acc)
